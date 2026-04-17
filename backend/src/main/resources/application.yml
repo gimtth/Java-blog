@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: online-blog-system
+  datasource:
+    url: ${MYSQL_URL:jdbc:mysql://localhost:3306/blog_system?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=UTF-8}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:123456}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+
+server:
+  port: 8080
+
+app:
+  cors:
+    allowed-origin: http://localhost:5173
+  auth:
+    username: ${ADMIN_USERNAME:admin}
+    password: ${ADMIN_PASSWORD:admin123}
+    jwt-secret: ${JWT_SECRET:0123456789012345678901234567890123456789012345678901234567890123}
+    jwt-expiration-minutes: 240

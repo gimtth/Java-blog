@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+
+app:
+  cors:
+    allowed-origin: http://localhost:5173
+  auth:
+    username: admin
+    password: admin123
+    jwt-secret: 0123456789012345678901234567890123456789012345678901234567890123
+    jwt-expiration-minutes: 240

@@ -1,0 +1,211 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Helvetica Neue", Arial, "PingFang SC", sans-serif;
+  background: #f5f5f5;
+  color: #303133;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+.page {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 24px 16px 40px;
+}
+
+.header,
+.header-actions,
+.public-section,
+.admin-header {
+  display: flex;
+}
+
+.header,
+.admin-header {
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.header h1,
+.admin-header h2,
+.section-title,
+.post-card h3 {
+  margin: 0;
+}
+
+.header p,
+.muted,
+.tag-line,
+.comment-item p {
+  color: #606266;
+}
+
+.header-actions,
+.form-actions {
+  gap: 12px;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.notice {
+  margin-bottom: 16px;
+}
+
+.public-section {
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.sidebar {
+  width: 280px;
+  flex: 0 0 280px;
+}
+
+.content {
+  flex: 1;
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.post-card {
+  margin-bottom: 16px;
+  cursor: pointer;
+}
+
+.tag-line {
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.article {
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+.comment-list {
+  display: grid;
+  gap: 12px;
+}
+
+.comment-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #ebeef5;
+}
+
+.admin-section {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-layout {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.admin-sidebar {
+  width: 220px;
+  flex: 0 0 220px;
+}
+
+.admin-content {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 16px;
+}
+
+.admin-sidebar-header h2 {
+  margin: 0;
+}
+
+.admin-sidebar-header p {
+  margin: 8px 0 0;
+  color: #606266;
+  font-size: 14px;
+}
+
+.admin-nav {
+  display: grid;
+  gap: 12px;
+  margin: 20px 0 16px;
+}
+
+.admin-nav .el-button,
+.logout-button {
+  justify-content: flex-start;
+  width: 100%;
+  margin-left: 0;
+}
+
+.admin-nav .el-button + .el-button {
+  margin-left: 0;
+}
+
+.dashboard-row,
+.table-card,
+.category-card {
+  margin-top: 0;
+}
+
+.page .el-card {
+  border-radius: 8px;
+}
+
+.page .el-card__header {
+  font-weight: 600;
+}
+
+.page .el-select,
+.page .el-input,
+.page .el-textarea {
+  width: 100%;
+}
+
+.page .el-table {
+  width: 100%;
+}
+
+.login-card {
+  max-width: 420px;
+  margin: 40px auto 0;
+}
+
+@media (max-width: 900px) {
+  .public-section,
+  .header,
+  .admin-header,
+  .admin-layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    flex-basis: auto;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+    flex-basis: auto;
+  }
+
+  .header,
+  .admin-header {
+    align-items: flex-start;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+}
