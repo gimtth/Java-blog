@@ -4,6 +4,14 @@ export interface Category {
   slug: string;
 }
 
+export interface PageResult<T> {
+  records: T[];
+  total: number;
+  current: number;
+  size: number;
+  pages: number;
+}
+
 export interface PostSummary {
   id: number;
   title: string;

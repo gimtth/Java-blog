@@ -1,4 +1,4 @@
-import type { Category, CategoryForm, Comment, Dashboard, PostDetail, PostForm, PostSummary } from "../types";
+import type { Category, CategoryForm, Comment, Dashboard, PageResult, PostDetail, PostForm, PostSummary } from "../types";
 
 const API_BASE = "http://localhost:8080/api";
 
@@ -48,12 +48,14 @@ export const clearToken = () => {
 
 export const isAuthed = () => Boolean(readToken());
 
-export const fetchPublicPosts = (category = "", keyword = "") => {
+export const fetchPublicPosts = (category = "", keyword = "", page = 1, size = 6) => {
   const search = new URLSearchParams();
   if (category) search.set("category", category);
   if (keyword) search.set("keyword", keyword);
+  search.set("page", String(page));
+  search.set("size", String(size));
   const suffix = search.size ? `?${search}` : "";
-  return request<PostSummary[]>(`/public/posts${suffix}`);
+  return request<PageResult<PostSummary>>(`/public/posts${suffix}`);
 };
 
 export const fetchPublicCategories = () => request<Category[]>("/public/categories");
@@ -62,10 +64,11 @@ export const submitComment = (postId: number, payload: { authorName: string; aut
   request<Comment>(`/public/posts/${postId}/comments`, { method: "POST", body: JSON.stringify(payload) });
 
 export const fetchDashboard = () => request<Dashboard>("/admin/dashboard", undefined, true);
-export const fetchAdminPosts = () => request<PostSummary[]>("/admin/posts", undefined, true);
+export const fetchAdminPosts = (page = 1, size = 10) => request<PageResult<PostSummary>>(`/admin/posts?page=${page}&size=${size}`, undefined, true);
 export const fetchAdminPost = (id: number) => request<PostDetail>(`/admin/posts/${id}`, undefined, true);
 export const fetchAdminCategories = () => request<Category[]>("/admin/categories", undefined, true);
-export const fetchAdminComments = () => request<Comment[]>("/admin/comments", undefined, true);
+export const fetchAdminComments = (page = 1, size = 10) =>
+  request<PageResult<Comment>>(`/admin/comments?page=${page}&size=${size}`, undefined, true);
 export const createPost = (payload: PostForm) => request<PostSummary>("/admin/posts", { method: "POST", body: JSON.stringify(payload) }, true);
 export const updatePost = (id: number, payload: PostForm) =>
   request<PostSummary>(`/admin/posts/${id}`, { method: "PUT", body: JSON.stringify(payload) }, true);

@@ -3,6 +3,7 @@ package com.example.blog.controller;
 import com.example.blog.dto.CategoryResponse;
 import com.example.blog.dto.CommentRequest;
 import com.example.blog.dto.CommentResponse;
+import com.example.blog.dto.PageResponse;
 import com.example.blog.dto.PostDetailResponse;
 import com.example.blog.dto.PostSummaryResponse;
 import com.example.blog.service.BlogService;
@@ -27,11 +28,13 @@ public class PublicBlogController {
     }
 
     @GetMapping("/posts")
-    public List<PostSummaryResponse> getPosts(
+    public PageResponse<PostSummaryResponse> getPosts(
             @RequestParam(required = false) String category,
-            @RequestParam(required = false) String keyword
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "1") long page,
+            @RequestParam(defaultValue = "6") long size
     ) {
-        return blogService.getPublishedPosts(category, keyword);
+        return blogService.getPublishedPosts(category, keyword, page, size);
     }
 
     @GetMapping("/posts/{slug}")

@@ -1,34 +1,27 @@
-package com.example.blog.model;
+package com.example.blog.dto.view;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.LocalDateTime;
 
-@TableName("posts")
-public class Post {
+public class PostDetailView {
 
-    @TableId(type = IdType.AUTO)
     private Long id;
     private String title;
     private String slug;
     private String excerpt;
     private String content;
-    @TableField("cover_image")
     private String coverImage;
-    private PostStatus status = PostStatus.DRAFT;
-    @TableField("category_id")
     private Long categoryId;
-    @TableField("created_at")
-    private LocalDateTime createdAt;
-    @TableField("updated_at")
-    private LocalDateTime updatedAt;
-    @TableField("published_at")
+    private String categoryName;
+    private String categorySlug;
+    private String status;
     private LocalDateTime publishedAt;
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -71,14 +64,6 @@ public class Post {
         this.coverImage = coverImage;
     }
 
-    public PostStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(PostStatus status) {
-        this.status = status;
-    }
-
     public Long getCategoryId() {
         return categoryId;
     }
@@ -87,20 +72,28 @@ public class Post {
         this.categoryId = categoryId;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public String getCategoryName() {
+        return categoryName;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
+    public String getCategorySlug() {
+        return categorySlug;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setCategorySlug(String categorySlug) {
+        this.categorySlug = categorySlug;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public LocalDateTime getPublishedAt() {

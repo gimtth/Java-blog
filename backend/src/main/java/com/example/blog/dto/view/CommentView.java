@@ -1,27 +1,24 @@
-package com.example.blog.model;
+package com.example.blog.dto.view;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.LocalDateTime;
 
-@TableName("comments")
-public class Comment {
+public class CommentView {
 
-    @TableId(type = IdType.AUTO)
     private Long id;
     private String authorName;
     private String authorEmail;
     private String content;
-    private CommentStatus status = CommentStatus.PENDING;
-    @TableField("post_id")
-    private Long postId;
-    @TableField("created_at")
+    private String status;
     private LocalDateTime createdAt;
+    private Long postId;
+    private String postTitle;
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getAuthorName() {
@@ -48,12 +45,20 @@ public class Comment {
         this.content = content;
     }
 
-    public CommentStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(CommentStatus status) {
+    public void setStatus(String status) {
         this.status = status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public Long getPostId() {
@@ -64,11 +69,11 @@ public class Comment {
         this.postId = postId;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public String getPostTitle() {
+        return postTitle;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setPostTitle(String postTitle) {
+        this.postTitle = postTitle;
     }
 }

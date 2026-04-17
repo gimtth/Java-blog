@@ -20,7 +20,7 @@ import {
   submitComment,
   updatePost,
 } from "./lib/api";
-import type { Category, CategoryForm, Comment, Dashboard, PostDetail, PostForm, PostSummary } from "./types";
+import type { Category, CategoryForm, Comment, Dashboard, PageResult, PostDetail, PostForm, PostSummary } from "./types";
 
 const loading = ref(false);
 const activeView = ref<"public" | "admin">("public");
@@ -37,6 +37,9 @@ const adminPosts = ref<PostSummary[]>([]);
 const adminCategories = ref<Category[]>([]);
 const adminComments = ref<Comment[]>([]);
 const editingPostId = ref<number | null>(null);
+const publicPage = reactive({ current: 1, size: 6, total: 0 });
+const adminPostPage = reactive({ current: 1, size: 10, total: 0 });
+const adminCommentPage = reactive({ current: 1, size: 10, total: 0 });
 
 const filters = reactive({ category: "", keyword: "" });
 const loginForm = reactive({ username: "admin", password: "admin123" });
@@ -55,6 +58,13 @@ const categoryForm = reactive<CategoryForm>({ name: "", slug: "" });
 const featuredPost = computed(() => posts.value[0] ?? null);
 const postRows = computed(() => posts.value.slice(1));
 
+const applyPageResult = <T>(target: { current: number; size: number; total: number }, result: PageResult<T>) => {
+  target.current = result.current;
+  target.size = result.size;
+  target.total = result.total;
+  return result.records;
+};
+
 const run = async (task: () => Promise<void>) => {
   loading.value = true;
   errorMessage.value = "";
@@ -70,7 +80,8 @@ const run = async (task: () => Promise<void>) => {
 
 const loadPublicData = async () => {
   categories.value = await fetchPublicCategories();
-  posts.value = await fetchPublicPosts(filters.category, filters.keyword);
+  const page = await fetchPublicPosts(filters.category, filters.keyword, publicPage.current, publicPage.size);
+  posts.value = applyPageResult(publicPage, page);
   if (posts.value.length > 0) {
     selectedPost.value = await fetchPostDetail(posts.value[0].slug);
   } else {
@@ -82,14 +93,37 @@ const openPost = async (slug: string) => {
   selectedPost.value = await fetchPostDetail(slug);
 };
 
+const searchPublicPosts = () => {
+  publicPage.current = 1;
+  run(loadPublicData);
+};
+
 const loadAdminData = async () => {
   adminDashboard.value = await fetchDashboard();
-  adminPosts.value = await fetchAdminPosts();
+  adminPosts.value = applyPageResult(adminPostPage, await fetchAdminPosts(adminPostPage.current, adminPostPage.size));
   adminCategories.value = await fetchAdminCategories();
-  adminComments.value = await fetchAdminComments();
+  adminComments.value = applyPageResult(
+    adminCommentPage,
+    await fetchAdminComments(adminCommentPage.current, adminCommentPage.size),
+  );
   if (!postForm.categoryId && adminCategories.value.length > 0) {
     postForm.categoryId = adminCategories.value[0].id;
   }
+};
+
+const handlePublicPageChange = (page: number) => {
+  publicPage.current = page;
+  run(loadPublicData);
+};
+
+const handleAdminPostPageChange = (page: number) => {
+  adminPostPage.current = page;
+  run(loadAdminData);
+};
+
+const handleAdminCommentPageChange = (page: number) => {
+  adminCommentPage.current = page;
+  run(loadAdminData);
 };
 
 const resetPostForm = () => {
@@ -239,7 +273,7 @@ onMounted(() => {
               <el-form-item label="关键词">
                 <el-input v-model="filters.keyword" placeholder="搜索标题或摘要" clearable />
               </el-form-item>
-              <el-button type="primary" :loading="loading" @click="run(loadPublicData)">搜索</el-button>
+              <el-button type="primary" :loading="loading" @click="searchPublicPosts">搜索</el-button>
             </el-form>
           </el-card>
         </aside>
@@ -252,15 +286,26 @@ onMounted(() => {
             <el-button type="primary" link @click="run(() => openPost(featuredPost.slug))">查看详情</el-button>
           </el-card>
 
-          <el-row :gutter="16">
-            <el-col v-for="item in postRows" :key="item.id" :xs="24" :md="12">
-              <el-card shadow="never" class="post-card" @click="run(() => openPost(item.slug))">
+            <el-row :gutter="16">
+              <el-col v-for="item in postRows" :key="item.id" :xs="24" :md="12">
+                <el-card shadow="never" class="post-card" @click="run(() => openPost(item.slug))">
                 <div class="tag-line">{{ item.categoryName }} / {{ item.status }}</div>
                 <h3>{{ item.title }}</h3>
                 <p class="muted">{{ item.excerpt }}</p>
               </el-card>
-            </el-col>
-          </el-row>
+              </el-col>
+            </el-row>
+
+          <el-card shadow="never" v-if="publicPage.total > publicPage.size">
+            <el-pagination
+              background
+              layout="prev, pager, next"
+              :current-page="publicPage.current"
+              :page-size="publicPage.size"
+              :total="publicPage.total"
+              @current-change="handlePublicPageChange"
+            />
+          </el-card>
 
           <el-card v-if="selectedPost" shadow="never">
             <template #header>文章详情</template>
@@ -419,6 +464,16 @@ onMounted(() => {
                       </template>
                     </el-table-column>
                   </el-table>
+                  <div class="pagination-wrap" v-if="adminPostPage.total > adminPostPage.size">
+                    <el-pagination
+                      background
+                      layout="prev, pager, next"
+                      :current-page="adminPostPage.current"
+                      :page-size="adminPostPage.size"
+                      :total="adminPostPage.total"
+                      @current-change="handleAdminPostPageChange"
+                    />
+                  </div>
                 </el-card>
               </template>
 
@@ -459,6 +514,16 @@ onMounted(() => {
                     </template>
                   </el-table-column>
                 </el-table>
+                <div class="pagination-wrap" v-if="adminCommentPage.total > adminCommentPage.size">
+                  <el-pagination
+                    background
+                    layout="prev, pager, next"
+                    :current-page="adminCommentPage.current"
+                    :page-size="adminCommentPage.size"
+                    :total="adminCommentPage.total"
+                    @current-change="handleAdminCommentPageChange"
+                  />
+                </div>
               </el-card>
             </main>
           </div>

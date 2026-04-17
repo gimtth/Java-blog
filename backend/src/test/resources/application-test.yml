@@ -1,19 +1,26 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1
     driver-class-name: org.h2.Driver
     username: sa
     password:
-  jpa:
-    hibernate:
-      ddl-auto: update
-    open-in-view: false
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 1
+      timeout: 2s
+  sql:
+    init:
+      mode: always
 
 app:
   cors:
     allowed-origin: http://localhost:5173
   auth:
-    username: admin
-    password: admin123
+    seed-username: admin
+    seed-password: admin123
     jwt-secret: 0123456789012345678901234567890123456789012345678901234567890123
     jwt-expiration-minutes: 240
+  cache:
+    hot-post-ttl-minutes: 30

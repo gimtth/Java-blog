@@ -4,6 +4,7 @@ import com.example.blog.dto.CategoryRequest;
 import com.example.blog.dto.CategoryResponse;
 import com.example.blog.dto.CommentResponse;
 import com.example.blog.dto.DashboardResponse;
+import com.example.blog.dto.PageResponse;
 import com.example.blog.dto.PostRequest;
 import com.example.blog.dto.PostDetailResponse;
 import com.example.blog.dto.PostSummaryResponse;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -36,8 +38,11 @@ public class AdminBlogController {
     }
 
     @GetMapping("/posts")
-    public List<PostSummaryResponse> getPosts() {
-        return blogService.getAllPosts();
+    public PageResponse<PostSummaryResponse> getPosts(
+            @RequestParam(defaultValue = "1") long page,
+            @RequestParam(defaultValue = "10") long size
+    ) {
+        return blogService.getAllPosts(page, size);
     }
 
     @GetMapping("/posts/{id}")
@@ -81,8 +86,11 @@ public class AdminBlogController {
     }
 
     @GetMapping("/comments")
-    public List<CommentResponse> getComments() {
-        return blogService.getAllComments();
+    public PageResponse<CommentResponse> getComments(
+            @RequestParam(defaultValue = "1") long page,
+            @RequestParam(defaultValue = "10") long size
+    ) {
+        return blogService.getAllComments(page, size);
     }
 
     @PatchMapping("/comments/{id}/approve")

@@ -1,7 +1,10 @@
 package com.example.blog.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.blog.dto.LoginRequest;
 import com.example.blog.dto.LoginResponse;
+import com.example.blog.mapper.UserMapper;
+import com.example.blog.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -13,36 +16,38 @@ import java.util.Date;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
 
-    private final String adminUsername;
-    private final String adminPassword;
+    private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
     private final long expirationMinutes;
     private final SecretKey secretKey;
 
     public AuthService(
-            @Value("${app.auth.username}") String adminUsername,
-            @Value("${app.auth.password}") String adminPassword,
+            UserMapper userMapper,
+            PasswordEncoder passwordEncoder,
             @Value("${app.auth.jwt-secret}") String jwtSecret,
             @Value("${app.auth.jwt-expiration-minutes}") long expirationMinutes
     ) {
-        this.adminUsername = adminUsername;
-        this.adminPassword = adminPassword;
+        this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
         this.expirationMinutes = expirationMinutes;
         this.secretKey = buildSecretKey(jwtSecret);
     }
 
     public LoginResponse login(LoginRequest request) {
-        if (!adminUsername.equals(request.username()) || !adminPassword.equals(request.password())) {
+        User user = userMapper.selectOne(new LambdaQueryWrapper<User>().eq(User::getUsername, request.username()).last("LIMIT 1"));
+        if (user == null || !passwordEncoder.matches(request.password(), user.getPassword())) {
             throw new BadCredentialsException("用户名或密码错误");
         }
 
         Instant now = Instant.now();
         String token = Jwts.builder()
-                .subject(request.username())
+                .subject(user.getUsername())
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plus(expirationMinutes, ChronoUnit.MINUTES)))
                 .signWith(secretKey)
